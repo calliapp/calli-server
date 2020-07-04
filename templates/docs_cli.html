@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+
+{% block title %}
+CLI Documentation
+{% endblock %}
+
+
+{% block docs %}
+        <div class="row pt-1" id="start">
+            <div class="col-lg-12 text-left">
+                <p>The CLI should install its     self so that it can be invoked simply with <kbd>calli</kbd>, and doing so will show the help manual</p>
+                <p>Commands listed below can either be run as <kbd>calli command [argument] &lt;--flag "option"&gt;/&lt;-f "opt"&gt;</kbd></p> where <kbd>[argument]</kbd> is required and <kbd>&lt;--flag "option"&gt;</kbd> is optional</p>
+                <p>If a flag and its option are not specified, you will then be asked to input that option</p>
+                <p>Options MUST be surrounded by quotation marks, and the argument must not</p>
+            </div>
+        </div>
+        <div class="row pt-1" id="example">
+            <div class="col-lg-12 text-left">
+                <h4>Example</h4>
+                <p>To create an event next Monday at 2pm to visit Jane Doe at 221b Baker Street for 45 minutes, the following one-liner can be used</p>
+                <p><kbd>calli event visit Jane Doe -d "monday" -t "2pm" -l "45" -i "221b baker street</kbd></p>
+                <p><kbd>event @4eb2fa created</kbd></p>
+            </div>
+        </div>
+        <div class="row pt-1" id="inputs">
+            <div class="col-lg-12 text-left">
+                <h4>Input allowances</h4>
+                <p><kbd>--day</kbd> inputs will accept any non-relative day, date-first (i.e. dd/mm/yyyy not mm/dd/yyyy)</p>
+                <ul>
+                    <li><kbd>sunday</kbd></li>
+                    <li><kbd>5jul</kbd></li>
+                    <li><kbd>5/7/2020</kbd></li>
+                    <li>etc</li>
+                </ul>
+                <p><kbd>--time</kbd> inputs will accept many time formats <div class="text-danger">These times currently only obey local timezone, and get stored as UTC. changing your local timezone will offset your calendar events</div></p>
+                <ul>
+                    <li><kbd>23:00</kbd></li>
+                    <li><kbd>11:00pm</kbd></li>
+                    <li><kbd>11pm</kbd></li>
+                    <li>etc</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row pt-5" id="commands">
+            <div class="col-lg-12 text-left">
+                <h2>Commands</h2>
+            </div>
+        </div>
+        <div class="row pt-3" id="event">
+            <div class="col-lg-12 text-left">
+                <h3>event</h3>
+                <h5><samp>calli event [event name]</samp></h5>
+                <p>creates a new calendar event</p>
+                <kbd>calli event First of June -d 1/6/2021 -t 1:30pm -l 15 -i "my favourite month"</kbd>
+                <ul class="no-points">
+                    <li><samp>--day, -d</samp>: date of the event [DD/MM/YYY]</li>
+                    <li><samp>--start, -t</samp>: start time of the event [HH:MMam/pm]</li>
+                    <li><samp>--duration, -l</samp>: duration of the event [minutes]</li>
+                    <li><samp>--info, -i</samp>: information for the event "(optional)"</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row pt-3" id="remind">
+            <div class="col-lg-12 text-left">
+                <h3>remind</h3>
+                <h5><samp>calli remind [reminder name]</samp></h5>
+                <p>creates a new reminder</p>
+                <kbd>calli remind Send latest report to Nick -d 24/6/2021 -t 11:00am -l 15 -i "nick@example.com"</kbd>
+                <ul class="no-points">
+                    <li><samp>--day, -d</samp>: date of the reminder [DD/MM/YYY]</li>
+                    <li><samp>--time, -t</samp>: time of the reminder [HH:MMam/pm]</li>
+                    <li><samp>--info, -i</samp>: information for the reminder "(optional)"</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row pt-3" id="delete">
+            <div class="col-lg-12 text-left">
+                <h3>delete</h3>
+                <h5><samp>calli remind [@hex] [@hex]</samp></h5>
+                <p>deletes an event specified with a hexcode</p>
+                <kbd>calli delete @4eb2fa 5f3a65</kbd>
+                <p>Event hex codes can be passed with or without the <kbd>@</kbd></p>
+            </div>
+        </div>
+
+        <!-- todo </-->
+        <div class="row pt-3" id="next">
+            <div class="col-lg-12 text-left">
+                <h3>next</h3>
+                <h5><samp>todo</samp></h5>
+                <p>todo</p>
+                <kbd>todo</kbd>
+            </div>
+        </div>
+
+        <div class="row pt-3" id="today">
+            <div class="col-lg-12 text-left">
+                <h3>today</h3>
+                <h5><samp>calli today</samp></h5>
+                <p>lists today's events (from now to midnight)</p>
+                <kbd>calli today</kbd>
+            </div>
+        </div>
+
+        <div class="row pt-3" id="tomorrow">
+            <div class="col-lg-12 text-left">
+                <h3>tomorrow</h3>
+                <h5><samp>calli tomorrow</samp></h5>
+                <p>lists tomorrow's events (from midnight to midnight)</p>
+                <kbd>calli tomorrow</kbd>
+            </div>
+        </div>
+
+        <div class="row pt-3" id="week">
+            <div class="col-lg-12 text-left">
+                <h3>week</h3>
+                <h5><samp>calli week</samp></h5>
+                <p>lists the events in the next 7 days</p>
+                <kbd>calli week</kbd>
+            </div>
+        </div>
+
+        <!-- todo </-->
+        <div class="row pt-3" id="search">
+            <div class="col-lg-12 text-left">
+                <h3>search</h3>
+                <h5><samp>todo</samp></h5>
+                <p>todo</p>
+                <kbd>todo</kbd>
+            </div>
+        </div>
+
+
+        <div class="row pt-3" id="end">
+            <div class="col-lg-12 text-left">
+            </div>
+        </div>
+{% endblock %}

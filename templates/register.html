@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="/static/styles.css" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+        <title>@->CalLI</title>
+
+    </head>
+
+    <body>
+        <nav class="navbar navbar-expand-md navbar-light bg-light border">
+            <div class="navbar-brand" href="/"><text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;"><a href="/">@->CalLI</text></a></div>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/register">register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login">log in</a></li>
+                    </ul>
+            </div>
+        </nav>
+
+    <main class="container p-5 justify-content-center">
+        <h1 class="text-center">create an account</h1>
+        {% if show_error %}
+        <div class="row justify-content-center">
+            <div class="col-4 pb-3">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ show_error }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <form action="/register" method="post">
+        <div class="row justify-content-center">
+            <div class="col-4 pt-3">
+                <h4 class="text-left">username</h4>
+                <div class="input-group mb-3">
+                    <input name="username" id="username" type="text" class="form-control" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+                <div id="username-alert" class="alert alert-danger" role="alert">
+                    please enter a username
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-4 pt-3">
+                <h4 class="text-left">password</h4>
+                <div class="input-group mb-3">
+                     <input name="password" id="password" type="text" class="form-control" aria-label="Password" aria-describedby="basic-addon1">
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-4 pt-3">
+                <h4 class="text-left">confirm password</h4>
+                <div class="input-group mb-3">
+                     <input name="confirmation" id="password-confirm" type="text" class="form-control" aria-label="Password" aria-describedby="basic-addon1">
+                </div>
+                <h6 class="text-left pb-2">passwords are not stored as plaintext</h6>
+                <div id="password-alert" class="alert alert-danger" role="alert">
+                    passwords must match
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <input disabled class="btn btn-primary" id="signup" type="submit" tabindex="-1" value="sign up">
+        </div>
+        </form>
+    <script>
+        function check_signup()
+        {
+            let username_ok = false;
+            let password_ok = false;
+            if (document.querySelector("#username").value === "") {
+                username_ok = false;
+                document.querySelector("#username-alert").style.display = "block";
+            } else {
+                username_ok = true;
+                document.querySelector("#username-alert").style.display = "none";
+            }
+            if ( document.querySelector("#password-confirm").value === "") {
+                password_ok = false;
+                document.querySelector("#password-alert").style.display = "block";
+            } else if (document.querySelector("#password").value == document.querySelector("#password-confirm").value)  {
+                password_ok = true;
+                document.querySelector("#password-alert").style.display = "none";
+            } else {
+                password_ok = false;
+                document.querySelector("#password-alert").style.display = "block";
+            }
+            if (username_ok && password_ok) {
+                document.querySelector("#signup").disabled = false;
+            } else if (!username_ok && !password_ok) {
+                document.querySelector("#signup").disabled = true;
+            }
+        };
+        window.setInterval(check_signup, 50);
+
+    </script>
+</main>
+</body>
+</html>
+

@@ -1,0 +1,26 @@
+{% extends "webapp.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block username %}
+{{ username }}
+{% endblock %}
+
+
+{% block docs %}
+        <div class="row pt-5">
+            <div class="col-lg-12 text-left">
+                <h2>today</h2>
+            </div>
+        </div>
+        <div class="row pt-5">
+            <div class="col-lg-12 text-left">
+                {% for i in today %}
+                {{ today['name'] }}
+                {% endfor %}
+            </div>
+        </div>
+
+{% endblock %}

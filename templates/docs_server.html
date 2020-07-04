@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+CLI Documentation
+{% endblock %}
+
+
+{% block docs %}
+        <div class="row pt-5">
+            <div class="col-lg-12 text-left">
+                <h2>Commands</h2>
+            </div>
+        </div>
+        <div class="row pt-1">
+            <div class="col-lg-12 text-left">
+                <h3>Event</h3>
+                <h5><samp>calli event [event name]</samp></h5>
+                creates a new calendar event</br>
+                <kbd>calli event First of June -d 1/6/2021 -t 1:30pm -l 15 -i "my favourite month"</kbd>
+                <ul class="no-points">
+                    <li><samp>--day, -d</samp>: date of the event [DD/MM/YYY]</li>
+                    <li><samp>--start, -t</samp>: start time of the event [HH:MMam/pm]</li>
+                    <li><samp>--duration, -l</samp>: duration of the event [minutes]</li>
+                    <li><samp>--info, -i</samp>: information for the event "(optional)"</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-lg-12 text-left">
+                <h3>Remind</h3>
+                <h5><samp>calli remind [reminder name]</samp></h5>
+                creates a new reminder</br>
+                <kbd>calli remind Send latest report to Nick -d 24/6/2021 -t 11:00am -l 15 -i "nick@example.com"</kbd>
+                <ul class="no-points">
+                    <li><samp>--day, -d</samp>: date of the reminder [DD/MM/YYY]</li>
+                    <li><samp>--time, -t</samp>: time of the reminder [HH:MMam/pm]</li>
+                    <li><samp>--info, -i</samp>: information for the reminder "(optional)"</li>
+                </ul>
+            </div>
+        </div>
+        <div class="row pt-3">
+            <div class="col-lg-12 text-left">
+                <h3>Today</h3>
+                <h5><samp>calli today</samp></h5>
+                lists todays events</br>
+                <pre><code>┌[ash@calli]
+└> <kbd>calli today</kbd>
+three events today
+@91eed5 -* 07:30am put recycling out
+@4eb2fa -&gt; 01:15pm pizza with dan
+@be8847 -&gt; 09:00pm zoom call with australia </code></pre>
+            </div>
+        </div>
+{% endblock %}

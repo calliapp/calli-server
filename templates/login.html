@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+    <head>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- documentation at http://getbootstrap.com/docs/4.1/, alternative themes at https://bootswatch.com/ -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet">
+
+        <link href="/static/styles.css" rel="stylesheet">
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+        <title>@->CalLI</title>
+
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-expand-md navbar-light bg-light border">
+            <div class="navbar-brand" href="/"><text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;"><a href="/">@->CalLI</text></a></div>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/register">register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/login">log in</a></li>
+                    </ul>
+            </div>
+        </nav>
+
+    <main class="container p-5 justify-content-center">
+        <h1 class="pb-3 text-center">login</h1>
+        {% if show_error %}
+        <div class="row justify-content-center">
+            <div class="col-4 pb-3">
+                <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                    {{ show_error }}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <form action="/login" method="post">
+            <div class="row justify-content-center pt-3">
+                <div class="form-group">
+                    <input autocomplete="off" autofocus class="form-control" name="username" placeholder="username" type="text">
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="form-group">
+                    <input class="form-control" name="password" placeholder="password" type="password">
+                </div>
+            </div>
+            <div class="row justify-content-center pt-3">
+                <button class="btn btn-primary justify-content-center" type="submit">log in</button>
+            </div>
+            <input type='hidden' id= 'timeoffset' name='timeoffset' value=''>
+        </form>
+        <div class="row justify-content-center pt-3">
+            <a class="btn btn-outline-secondary" href="/register">create an account</a>
+        </div>
+    </main>
+    </body>
+    <script>
+    var offset = (-1) * (new Date().getTimezoneOffset() / 60);
+    document.getElementById('timeoffset').value = offset;
+    </script>
+
+</html>
+

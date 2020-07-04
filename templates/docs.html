@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Documentation
+{% endblock %}
+
+
+{% block docs %}
+        <div class="row pt-5">
+            <div class="col-lg-12 text-left">
+                <h2>General Documentation</h2>
+            </div>
+        </div>
+        <div class="row pt-5">
+            <div class="col-lg-12 text-left">
+                <h3>API Philosophy</h3>
+                <p>The Database stores event times as UTC UNIX timestamps, in absolute time, so it is up to the client to present this to the user in their timezone, and to pass the API correct start and end times for today and tomorrow etc</p>
+            </div>
+        </div>
+
+{% endblock %}
