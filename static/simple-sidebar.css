@@ -48,3 +48,7 @@
     margin-left: -15rem;
   }
 }
+.fixed-tabl {
+  table-layout: fixed;
+  width: 100%;
+}

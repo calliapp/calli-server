@@ -13,7 +13,7 @@ import random
 
 import json
 import bcrypt
-
+import jinja2
 
 
 app = Flask(__name__)
@@ -24,6 +24,8 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 db = SQL("sqlite:///calli.db")
+
+app.add_template_filter(dt.datetime)
 
 ## Landing page ##
 
@@ -53,21 +55,77 @@ def docs_server():
 
 @app.route("/dash", methods=["GET"])
 def web_dash():
-    try:
-        print("trying session")
-        session['user_id']
-    except KeyError:
-        print("keyerror")
-        return redirect('/login')
+    if request.method == "GET":
+        try:
+            session['user_id']
+        except KeyError:
+            return redirect('/login')
+        else:
+            ## Today ##
+            now = dt.datetime.utcnow().strftime('%s')
+            today_start = dt.datetime.now().strftime('%s')
+            today_end = (dt.datetime.combine((dt.datetime.today()+dt.timedelta(days=1)), dt.time(0))+dt.timedelta(hours=(-1*int(session['offset'])))).strftime("%s")
+            today_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start BETWEEN (:start) AND (:end) ORDER BY start", userid=session['user_id'], start=today_start, end=str(int(today_end)-1))
+            for event in today_calendar:
+                event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+                event['end'] = (((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+            ## Tomorrow ##
+            tomorrow_start = (dt.datetime.combine((dt.datetime.today()+dt.timedelta(days=1)), dt.time(0))+dt.timedelta(hours=(-1*int(session['offset'])))).strftime("%s")
+            tomorrow_end = (dt.datetime.combine((dt.datetime.today()+dt.timedelta(days=2)), dt.time(0))+dt.timedelta(hours=(-1*int(session['offset'])))).strftime("%s")
+            tomorrow_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start BETWEEN (:start) AND (:end) ORDER BY start", userid=session['user_id'], start=tomorrow_start, end=str(int(tomorrow_end)-1))
+            for event in tomorrow_calendar:
+                event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+                event['end'] = (((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+            ## Rest of the week ##
+            rest_start = (dt.datetime.combine((dt.datetime.today()+dt.timedelta(days=2)), dt.time(0))+dt.timedelta(hours=(-1*int(session['offset'])))).strftime("%s")
+            reset_end = (dt.datetime.combine((dt.datetime.today()+dt.timedelta(days=7)), dt.time(0))+dt.timedelta(hours=(-1*int(session['offset'])))).strftime("%s")
+            rest_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start BETWEEN (:start) AND (:end) ORDER BY start", userid=session['user_id'], start=rest_start, end=str(int(reset_end)-1))
+            for event in rest_calendar:
+                event['day'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%a %d %b %y"))
+                event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+                event['end'] = (((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+            return render_template("dash.html", userid=session['user_id'], username=session['username'], today_calendar=today_calendar, tomorrow_calendar=tomorrow_calendar, rest_calendar=rest_calendar, offset=session['offset'])
     else:
-        print("load dash")
-        now = dt.datetime.utcnow().strftime('%s')
-        today_start = dt.datetime.now().strftime('%s')
-        today_end = (dt.datetime.combine((dt.datetime.today()+dt.timedelta(days=1)), dt.time(0))+dt.timedelta(hours=(-1*int(session['offset'])))).strftime("%s")
-        today_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start BETWEEN (:start) AND (:end)", userid=session['user_id'], start=today_start, end=str(int(today_end)-1))
-        print(json.loads(json.dumps(today_calendar)))
-        #return render_template("dash.html", userid=session['user_id'], username=session['username'])
+        return "only get"
 
+@app.route("/dash/events")
+def dash_events():
+    if request.method == "GET":
+        try:
+            session['user_id']
+        except KeyError:
+            return redirect('/login')
+        else:
+            ## From now onwards ##
+            today_start = dt.datetime.now().strftime('%s')
+            events_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND type='E' AND start>=(:start) ORDER BY start", userid=session['user_id'], start=today_start)
+            for event in events_calendar:
+                event['day'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%a %d %b %y"))
+                event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+                event['end'] = (((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+            return render_template("dash_events.html", userid=session['user_id'], username=session['username'], events_calendar=events_calendar, offset=session['offset'])
+    else:
+        return "no"
+
+
+@app.route("/dash/reminders")
+def dash_remind():
+    if request.method == "GET":
+        try:
+            session['user_id']
+        except KeyError:
+            return redirect('/login')
+        else:
+            ## From now onwards ##
+            today_start = dt.datetime.now().strftime('%s')
+            reminds_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND type='R' AND start>=(:start) ORDER BY start", userid=session['user_id'], start=today_start)
+            for event in reminds_calendar:
+                event['day'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%a %d %b %y"))
+                event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+                event['end'] = (((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+            return render_template("dash_reminds.html", userid=session['user_id'], username=session['username'], reminds_calendar=reminds_calendar, offset=session['offset'])
+    else:
+        return "no"
 
 @app.route("/logout")
 def logout():
@@ -124,14 +182,14 @@ def web_register():
 def test():
     return jsonify(""), 204, {}
 
-@app.route("/api/events", methods=["POST", "GET", "DELETE"])
+@app.route("/api/events", methods=["POST", "GET", "DELETE", "PATCH"])
 def new_event():
     if request.method == "GET":
         auth = db.execute("SELECT * FROM users WHERE token=(:token)", token=request.headers['token'])
         if auth:
             start = request.args.get('start')
             end = request.args.get('end')
-            today_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start BETWEEN (:start) AND (:end)", userid=auth[0]['userid'], start=start, end=end)
+            today_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start BETWEEN (:start) AND (:end) ORDER BY start", userid=auth[0]['userid'], start=start, end=end)
             return jsonify(today_calendar)
     elif request.method == "POST":
         auth = db.execute("SELECT userid FROM users WHERE token=(:token)", token=request.headers['token'])
@@ -142,8 +200,10 @@ def new_event():
             eventhex = '@%02X%02X%02X' % (r(),r(),r())
             while any(d['eventhex'] == eventhex for d in existing):
                 eventhex = '@%02X%02X%02X' % (r(),r(),r())
-            if not content['end']:
-                content['end'] = 0
+            try:
+                content['end']
+            except KeyError:
+                content['end'] = str(0)
             db.execute("INSERT INTO calendar (userid, eventhex, type, name, start, end, info) VALUES (:userid, :eventhex, :etype, :name, :start, :end, :info)", userid=auth[0]['userid'], eventhex=eventhex, etype=content['type'], name=content['name'], start=content['start'], end=content['end'], info=content['info'])
             return json.dumps({'eventhex':eventhex}), 200, {'ContentType':'application/json'}
     elif request.method == "DELETE":
@@ -157,6 +217,17 @@ def new_event():
                 return json.dumps({'eventhex':eventhex}), 204, {'ContentType':'application/json'}
             else:
                 return jsonify("failed"), 401, {'ContentType':'application/json'}
+    elif request.method == "PATCH":
+        auth = db.execute("SELECT * FROM users WHERE token=(:token)", token=request.headers['token'])
+        if auth:
+            eventid = "@" + request.args.get('eventhex')
+            content = request.json
+            print(eventid)
+            for i in content:
+                if content[i]:
+                    print(i, content[i])
+                    db.execute("UPDATE calendar SET :col=:val WHERE userid=(:userid) AND eventhex=(:eventid)", col=i, val=content[i], userid=auth[0]['userid'], eventid=eventid)
+            return "boobs"
 
 @app.route("/api/login", methods=["POST"])
 def login():
