@@ -136,12 +136,20 @@ def dash_edit():
         ## TODO some new info isnt sent
         eventhex = '@' + request.args.get('event').upper()
         event = db.execute("SELECT * FROM calendar WHERE eventhex=:eventhex AND userid=:userid", eventhex=eventhex, userid=session['user_id'])[0]
-        event['day'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%a %d %b %y"))
+
+        old_start = ((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
+        old_end = ((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
+
+        event['day'] = old_start.strftime("%a %d %b %y")
         event['duration'] = (int(event['end']) - int(event['start']))/60
-        event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
+        event['start'] = old_start.strftime("%I:%M%p")
+
         ## Start parsing new fields
         if request.form.get("info"):
             new_info = request.form.get('info')
+        else:
+            new_info = event['info']
+
         ## Duration
         if request.form.get("duration"):
             if event['type'] == "E":
@@ -158,16 +166,32 @@ def dash_edit():
                 new_date = dateutil.parser.parse(request.form.get('day'), dayfirst=True)
             except ValueError:
                 return render_template("dash_edit.html", show_error="please enter a valid date", event=event, userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'], eventhex=request.args.get('event').lower())
+        else:
+            new_date = old_start
         ## Start
         if request.form.get("start"):
             try:
                 new_time = dateutil.parser.parse(request.form.get('start'), dayfirst=True)
             except ValueError:
                 return render_template("dash_edit.html", show_error="please enter a valid start time", event=event, userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'], eventhex=request.args.get('event').lower())
+        else:
+            new_time = old_start
+        ## Combine new date and time to start ##
         new_start = (dt.datetime.combine(new_date.date(), new_time.time())+dt.timedelta(hours=(-1*int(session['offset']))))
-        if event['type'] == "E"
-            new_end = new_start + dt.timedelta(minutes=int(new_duration))
-        print(new_start)
+        ## If event, calculate end 33
+        if event['type'] == "E":
+            new_end = (new_start + dt.timedelta(minutes=int(new_duration))).strftime('%s')
+        else:
+            ## Else its a remind ##
+            new_end = str(0)
+        updated_event = db.execute("UPDATE calendar SET start=:start, end=:end, info=:info WHERE eventhex=(:eventhex) AND userid=(:userid)", userid=session['user_id'], eventhex=eventhex, start=new_start.strftime('%s'), end=new_end, info=new_info)
+        ## If DB updated one event ##
+        if updated_event == 1:
+            return redirect('/dash')
+        else:
+            return render_template("dash_edit.html", show_error="edit unsuccessful. please try again", event=event, userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'], eventhex=request.args.get('event').lower())
+
+
 
 @app.route("/dash/events")
 def dash_events():
