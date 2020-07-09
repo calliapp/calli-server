@@ -52,3 +52,13 @@
   table-layout: fixed;
   width: 100%;
 }
+.nb {
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  -webkit-appearance: none;
+  border: none;
+  box-shadow: none;
+  background: none;
+  fill: red;
+}

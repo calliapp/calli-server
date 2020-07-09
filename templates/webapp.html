@@ -94,6 +94,18 @@
     var tzname = new Intl.DateTimeFormat().resolvedOptions().timeZone;
     document.querySelector("#timezonename").innerHTML = tzname;
     document.querySelector("#timezoneoffset").innerHTML = "timezone: GMT" + (offset<0?"":"+") + offset;
+    function deleteEvent(token, eventhex) {
+        var r = confirm("are you sure you want to delete this event?");
+        if (r == true) {
+          fetch('{{ url }}/api/events', {
+              method: "DELETE",
+              headers: {'token': token,
+                        'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ hex: [eventhex] }),
+          });
+        }
+    }
   </script>
 
 </body>
