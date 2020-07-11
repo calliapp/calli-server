@@ -53,6 +53,7 @@
                         <td>{{ event['name'] }}</td>
                         <td>{{ event['info'] }}</td>
                         <td>
+
                             <button class="nb" type="button" data-toggle="modal" data-target="#exampleModal" id="delete-event-button" onclick="deleteEvent('{{ token }}', '{{ event['eventhex'] }}')">
                                 <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-check2-square" fill="red" xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" d="M15.354 2.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3-3a.5.5 0 1 1 .708-.708L8 9.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>

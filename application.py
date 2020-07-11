@@ -17,13 +17,14 @@ import json
 import bcrypt
 import jinja2
 import dateutil.parser
+import requests
 
 
 
 ## BEGIN SETUP
 
 ## Repalce this with the base URL of your instance
-url = "http://c448e6d2-b8c6-460c-9f06-b405cfa8cb01-ide.cs50.xyz"
+baseurl = "http://c448e6d2-b8c6-460c-9f06-b405cfa8cb01-ide.cs50.xyz"
 
 app = Flask(__name__)
 
@@ -103,15 +104,76 @@ def web_dash():
                 event['day'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%a %d %b %y"))
                 event['start'] = (((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
                 event['end'] = (((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset']))).strftime("%I:%M%p"))
-            return render_template("dash.html", userid=session['user_id'], username=session['username'], today_calendar=today_calendar, tomorrow_calendar=tomorrow_calendar, rest_calendar=rest_calendar, offset=session['offset'], token=session['token'], url=url)
+            return render_template("dash.html", userid=session['user_id'], username=session['username'], today_calendar=today_calendar, tomorrow_calendar=tomorrow_calendar, rest_calendar=rest_calendar, offset=session['offset'], token=session['token'], url=baseurl)
     ## TODO ##
     else:
         return "only get"
 
 ## TODO create
-# @app.route("/dash/create", methods=["GET", "POST"])
-# def dash_create():
-#
+@app.route("/dash/create", methods=["GET", "POST"])
+def dash_create():
+    if request.method == "GET":
+        try:
+            session['user_id']
+        except KeyError:
+            return redirect('/login')
+        else:
+            today_default = dt.datetime.now().date().strftime("%a %d %b %y")
+            time_default = dt.time(12).strftime("%I:%M %P")
+            duration_default = str(60)
+            return render_template("dash_create.html", today_default=today_default, time_default=time_default, duration_default=duration_default, userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'])
+    elif request.method == "POST":
+        print(request.form.get('name'))
+        print(request.form.get('day'))
+        print(request.form.get('start'))
+        print(request.form.get('duration'))
+        print(request.form.get('info'))
+
+        ## Start parsing the new event
+        event = {}
+        event['info'] = request.form.get('info')
+        event['name'] = request.form.get('name')
+        if request.form.get('day'):
+            try:
+                date = dateutil.parser.parse(request.form.get('day'), dayfirst=True)
+            except ValueError:
+                render_template("dash_create.html", show_error="please enter a valid date for the event", userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'])
+        else:
+            date = dt.datetime.now()
+
+        if request.form.get('start'):
+            try:
+                time = dateutil.parser.parse(request.form.get('start'), dayfirst=True)
+            except ValueError:
+                render_template("dash_create.html", show_error="please enter a valid time for the event", userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'])
+        else:
+            time = dt.datetime.combine(dt.datetime.now().date(), dt.time(12))
+
+        if request.form.get('duration'):
+            try:
+                duration = int(request.form.get('duration'))
+            except ValueError:
+                return render_template("dash_create.html", show_error="please enter an integer duration for the event, or select reminder", userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'])
+        else:
+            duration = 60
+
+        start = ((dt.datetime.combine(date.date(), time.time()).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
+        event['start'] = start.strftime("%s")
+
+        if request.form.get('type') == "E":
+            end = (start + dt.timedelta(minutes=duration))
+            event['end'] = end.strftime("%s")
+        else:
+            event['end'] = str(0)
+
+        event['type'] = request.form.get('type')
+
+        url = baseurl + "/events"
+
+        pending = requests.post(url, json=json.loads(json.dumps(event)), headers={'token': session['token']})
+
+        return pending.text
+
 
 
 @app.route("/dash/edit", methods=["GET", "POST"])
@@ -136,10 +198,8 @@ def dash_edit():
         ## TODO some new info isnt sent
         eventhex = '@' + request.args.get('event').upper()
         event = db.execute("SELECT * FROM calendar WHERE eventhex=:eventhex AND userid=:userid", eventhex=eventhex, userid=session['user_id'])[0]
-
         old_start = ((dt.datetime.utcfromtimestamp(int(event['start'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
         old_end = ((dt.datetime.utcfromtimestamp(int(event['end'])).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
-
         event['day'] = old_start.strftime("%a %d %b %y")
         event['duration'] = (int(event['end']) - int(event['start']))/60
         event['start'] = old_start.strftime("%I:%M%p")
@@ -301,10 +361,10 @@ def web_register():
 
 @app.route("/api/events", methods=["POST", "GET", "DELETE", "PATCH"])
 def new_event():
-    ## TODO move auth to before request.method
-    if request.method == "GET":
-        auth = db.execute("SELECT * FROM users WHERE token=(:token)", token=request.headers['token'])
-        if auth:
+    auth = db.execute("SELECT * FROM users WHERE token=(:token)", token=request.headers['token'])
+    if auth:
+        ## TODO move auth to before request.method
+        if request.method == "GET":
             ## If GET by start and end time
             if request.args.get('start') and request.args.get('end'):
                 start = request.args.get('start')
@@ -317,10 +377,12 @@ def new_event():
                 today_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND eventhex=(:eventhex)", userid=auth[0]['userid'], eventhex="@"+request.args.get('eventhex').upper())
                 return jsonify(today_calendar)
             ## TODO If GET by start time onwards
+            elif request.args.get('start'):
+                start = request.args.get('start')
+                today_calendar = db.execute("SELECT * FROM calendar WHERE userid=(:userid) AND start>=(:start) ORDER BY start", userid=auth[0]['userid'], start=start)
+                return jsonify(today_calendar)
             ## else...
-    elif request.method == "POST":
-        auth = db.execute("SELECT userid FROM users WHERE token=(:token)", token=request.headers['token'])
-        if auth:
+        elif request.method == "POST":
             ## Load content ##
             content = request.json
             ## Random hex lambda ##
@@ -340,9 +402,7 @@ def new_event():
             db.execute("INSERT INTO calendar (userid, eventhex, type, name, start, end, info) VALUES (:userid, :eventhex, :etype, :name, :start, :end, :info)", userid=auth[0]['userid'], eventhex=eventhex, etype=content['type'], name=content['name'], start=content['start'], end=content['end'], info=content['info'])
             ## Return the chosen eventhex ##
             return json.dumps({'eventhex':eventhex}), 200, {'ContentType':'application/json'}
-    elif request.method == "DELETE":
-        auth = db.execute("SELECT userid FROM users WHERE token=(:token)", token=request.headers['token'])
-        if auth:
+        elif request.method == "DELETE":
             content = request.json
             ## Set a counter for number of events deleted ##
             deleted = 0
@@ -356,9 +416,7 @@ def new_event():
             else:
                 ## Else you fucked up ##
                 return jsonify("failed"), 401, {'ContentType':'application/json'}
-    elif request.method == "PATCH":
-        auth = db.execute("SELECT * FROM users WHERE token=(:token)", token=request.headers['token'])
-        if auth:
+        elif request.method == "PATCH":
             ## re-create the eventhex string
             eventid = "@" + request.args.get('eventhex')
             content = request.json
@@ -369,9 +427,9 @@ def new_event():
             else:
                 return jsonify("failed"), 404, {'ContentType':'application/json'}
         else:
-            return jsonify("unauthorized"), 401, {'ContentType':'application/json'}
+            return jsonify("method not allowed"), 405, {'ContentType':'application/json'}
     else:
-        return jsonify("method not allowed"), 405, {'ContentType':'application/json'}
+        return jsonify("unauthorized"), 401, {'ContentType':'application/json'}
 
 
 @app.route("/api/login", methods=["POST"])
