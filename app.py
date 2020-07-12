@@ -157,7 +157,7 @@ def dash_create():
         else:
             duration = 60
 
-        start = ((dt.datetime.combine(date.date(), time.time()).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
+        start = ((dt.datetime.combine(date.date(), time.time()).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(-1*session['offset'])))
         event['start'] = start.strftime("%s")
 
         if request.form.get('type') == "event":
