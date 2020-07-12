@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'jetbrains';
+  src: url(''); /* IE9 Compat Modes */
+  src: url('jbm/web/eot/JetBrainsMono-Regular.eot') format('embedded-opentype'), /* IE6-IE8 */
+       url('jbm/web/woff2/JetBrainsMono-Regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('jbm/web/woff/JetBrainsMono-Regular.woff') format('woff'), /* Pretty Modern Browsers */
+       url('jbm/ttf/JetBrainsMono-Regular.ttf')  format('truetype'); /* Safari, Android, iOS */
+}
 .container {
   max-width: 960px;
 }
