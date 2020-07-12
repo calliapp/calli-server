@@ -24,7 +24,7 @@ import requests
 ## BEGIN SETUP
 
 ## Repalce this with the base URL of your instance
-baseurl = "http://c448e6d2-b8c6-460c-9f06-b405cfa8cb01-ide.cs50.xyz"
+baseurl = "0.0.0.0:5000"
 
 app = Flask(__name__)
 
