@@ -160,7 +160,7 @@ def dash_create():
         start = ((dt.datetime.combine(date.date(), time.time()).replace(tzinfo=dt.timezone.utc)) + dt.timedelta(hours=int(session['offset'])))
         event['start'] = start.strftime("%s")
 
-        if request.form.get('type') == "E":
+        if request.form.get('type') == "event":
             end = (start + dt.timedelta(minutes=duration))
             event['end'] = end.strftime("%s")
         else:
