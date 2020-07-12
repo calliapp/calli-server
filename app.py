@@ -169,10 +169,21 @@ def dash_create():
         event['type'] = request.form.get('type')
 
         url = baseurl + "/events"
+        
+        r = lambda: random.randint(0,255)
+        existing = db.execute("SELECT eventhex FROM calendar WHERE userid=(:userid)", userid=session['user_id'])
+        eventhex = '@%02X%02X%02X' % (r(),r(),r())
+        ## Check for eventhex collission ##
+        while any(d['eventhex'] == eventhex for d in existing):
+            eventhex = '@%02X%02X%02X' % (r(),r(),r())
 
-        pending = requests.post(url, json=json.loads(json.dumps(event)), headers={'token': session['token']})
-
-        return pending.text
+        ## Create event ##
+        pending = db.execute("INSERT INTO calendar (userid, eventhex, type, name, start, end, info) VALUES (:userid, :eventhex, :etype, :name, :start, :end, :info)", userid=session['user_id'], eventhex=eventhex, etype=event['type'], name=event['name'], start=event['start'], end=event['end'], info=event['info'])
+        
+        if pending == 1:
+            return redirect("/dash")
+        else:
+            return render_template("dash_create.html", show_error="event creation failed. please try again.", userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'])
 
 
 
