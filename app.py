@@ -24,7 +24,7 @@ import requests
 ## BEGIN SETUP
 
 ## Repalce this with the base URL of your instance
-baseurl = "164.90.148.248:5000"
+baseurl = "https://calliapp.dev"
 
 app = Flask(__name__)
 
