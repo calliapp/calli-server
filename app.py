@@ -460,3 +460,6 @@ def login():
                 return jsonify("unauthorized"), 401, {'ContentType':'application/json'}
     else:
         return jsonify("method not allowed"), 405, {'ContentType':'application/json'}
+
+if __name__ == "__main__":
+    app.run(host='0.0.0.0')
