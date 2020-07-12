@@ -167,11 +167,11 @@ def dash_create():
             event['end'] = str(0)
 
         if request.form.get('type') == "event":
-            event['type'] == "E"
+            event['type'] = "E"
         elif request.form.get('type') == 'reminder':
-            event['type'] == "R"
+            event['type'] = "R"
         else:
-            event['type'] == "?"
+            event['type'] = "?"
 
         url = baseurl + "/events"
         
