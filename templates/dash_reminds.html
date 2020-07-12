@@ -1,7 +1,7 @@
 {% extends "webapp.html" %}
 
 {% block title %}
-<text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">@->CalLI</text> dashboard
+<text style="font-family:'jetbrains', 'jetbrains', monospace;">@->CalLI</text> dashboard
 {% endblock %}
 
 {% block username %}
@@ -31,13 +31,13 @@
                         {% for event in reminds_calendar %}
                       <tr>
                         <th>
-                            <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">{{ event['eventhex'].lower() }}</text>
+                            <text style="font-family:'jetbrains', 'jetbrains', monospace;">{{ event['eventhex'].lower() }}</text>
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                             {% elif event['type'] == "R" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-*</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-*</text>
                             {% else %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-?</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-?</text>
                             {% endif %}
                         </th>
                         <td>
@@ -46,7 +46,7 @@
                         <td>
                             {{ event['start'] }}
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                                 {{ event['end'] }}
                             {% endif %}
                         </td>

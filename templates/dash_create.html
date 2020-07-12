@@ -1,7 +1,7 @@
 {% extends "webapp.html" %}
 
 {% block title %}
-<text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">@->CalLI</text> dashboard
+<text style="font-family:'jetbrains', 'jetbrains', monospace;">@->CalLI</text> dashboard
 {% endblock %}
 
 {% block username %}
@@ -50,6 +50,10 @@
 
                         <input id="dur-inpt" autocomplete="off" name="duration" class="form-control pb-1" type="text" placeholder="{{ duration_default }}">
 
+                        <div id="dur-warn" class="pt-2 alert alert-danger text-center" role="alert">
+                            please enter an integer number of minutes
+                        </div>
+
                         <h5 class="pt-2">info</h5>
 
                         <input autocomplete="off" name="info" class="form-control pb-2" type="text" placeholder="">
@@ -71,9 +75,14 @@
             } else if (document.querySelector("#event-type").value === "reminder")  {
                 document.querySelector("#dur-title").style.display = "none";
                 document.querySelector("#dur-inpt").style.display = "none";
-            }
+            };
         };
-        window.setInterval(check_type, 50);
+    function check_dur()
+        {
+        document.querySelector("#dur-warn").style.display = document.querySelector("#dur-inpt").innerHTML.match(/^[0-9]+$/) ? 'block' : 'none';
+    };
+    window.setInterval(check_type, 50);
+    window.setInterval(check_dur, 50);
 
 </script>
 

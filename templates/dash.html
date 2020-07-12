@@ -1,7 +1,7 @@
 {% extends "webapp.html" %}
 
 {% block title %}
-<text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">@->CalLI</text> dashboard
+<text style="font-family:'jetbrains', 'jetbrains', monospace;">@->CalLI</text> dashboard
 {% endblock %}
 
 {% block username %}
@@ -29,6 +29,12 @@
         <div class="row pt-3">
             <div class="col-lg-12 text-left">
                 <h2>today</h2>
+                <a href="/dash/create" class="btn btn-outline-success" id="create-event">
+                    <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-plus align-middle" fill="green" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8 3.5a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5.5H4a.5.5 0 0 1 0-1h3.5V4a.5.5 0 0 1 .5-.5z"/>
+                        <path fill-rule="evenodd" d="M7.5 8a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0V8z"/>
+                      </svg>
+                new event</a>
             </div>
         </div>
         <div class="row pt-3">
@@ -47,19 +53,19 @@
                         {% for event in today_calendar %}
                       <tr>
                         <th>
-                            <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">{{ event['eventhex'].lower() }}</text>
+                            <text style="font-family:'jetbrains', 'jetbrains', monospace;">{{ event['eventhex'].lower() }}</text>
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                             {% elif event['type'] == "R" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-*</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-*</text>
                             {% else %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-?</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-?</text>
                             {% endif %}
                         </th>
                         <td>
                             {{ event['start'] }}
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                                 {{ event['end'] }}
                             {% endif %}
                         </td>
@@ -117,19 +123,19 @@
                         {% for event in tomorrow_calendar %}
                       <tr>
                         <th>
-                            <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">{{ event['eventhex'].lower() }}</text>
+                            <text style="font-family:'jetbrains', 'jetbrains', monospace;">{{ event['eventhex'].lower() }}</text>
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                             {% elif event['type'] == "R" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-*</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-*</text>
                             {% else %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-?</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-?</text>
                             {% endif %}
                         </th>
                         <td>
                             {{ event['start'] }}
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                                 {{ event['end'] }}
                             {% endif %}
                         </td>
@@ -188,20 +194,20 @@
                         {% for event in rest_calendar %}
                       <tr>
                         <th>
-                            <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">{{ event['eventhex'].lower() }}</text>
+                            <text style="font-family:'jetbrains', 'jetbrains', monospace;">{{ event['eventhex'].lower() }}</text>
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                             {% elif event['type'] == "R" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-*</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-*</text>
                             {% else %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-?</text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-?</text>
                             {% endif %}
                         </th>
                         <td>
                             {{ event['day'] }}
                             {{ event['start'] }}
                             {% if event['type'] == "E" %}
-                                <text style="font-family:'JetBrainsMono-Regular', 'JetBrains Mono', monospace;">-></text>
+                                <text style="font-family:'jetbrains', 'jetbrains', monospace;">-></text>
                                 {{ event['end'] }}
                             {% endif %}
                         </td>
