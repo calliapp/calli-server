@@ -180,7 +180,7 @@ def dash_create():
         ## Create event ##
         pending = db.execute("INSERT INTO calendar (userid, eventhex, type, name, start, end, info) VALUES (:userid, :eventhex, :etype, :name, :start, :end, :info)", userid=session['user_id'], eventhex=eventhex, etype=event['type'], name=event['name'], start=event['start'], end=event['end'], info=event['info'])
         
-        if pending == 1:
+        if pending not None:
             return redirect("/dash")
         else:
             return render_template("dash_create.html", show_error="event creation failed. please try again.", userid=session['user_id'], username=session['username'], offset=session['offset'], token=session['token'])
