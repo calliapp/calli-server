@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+CLI Installation Documentation
+{% endblock %}
+
+
+{% block docs %}
+        <div class="row pt-1" id="start">
+            <div class="col-lg-12 text-left">
+                <h3><samp>wget </samp></h3>
+                <p>The CLI is a Bash script with a Python shebang, so you need Python3 installed, as well as the modules found in <kbd>requirements.txt</kbd></p>
+            </div>
+        </div>
+        <div class="row pt-1" id="start">
+            <div class="col-lg-12 text-left">
+                <h2>routes</h2>
+            </div>
+        </div>
+
+        <div class="row pt-3" id="remind">
+            <div class="col-lg-12 text-left">
+                <h3><samp>/api/login</samp></h3>
+                <h5><kbd>POST</kbd></h5>
+                <p>returns token if login credentials are correct</p>
+                <h6>JSON body</h6>
+                <ul class="no-points">
+                    <li><samp>username:</samp><span class="badge badge-secondary">username</span></li>
+                    <li><samp>password:</samp><span class="badge badge-secondary">plaintext password</span></li>
+                </ul>
+                <h6>response</h6>
+                <span class="badge badge-secondary">HTTP/1.1 200</span>
+                <ul class="no-points">
+                    <li><samp>token:</samp> user token</li>
+                </ul>
+            </div>
+        </div>  
+        
+
+                
+       
+{% endblock %}

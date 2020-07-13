@@ -1,0 +1,119 @@
+{% extends "layout.html" %}
+
+{% block title %}
+API Documentation
+{% endblock %}
+
+
+{% block docs %}
+        <div class="row pt-1" id="start">
+            <div class="col-lg-12 text-left">
+                <p>The API aims to be as RESTful as possible, while still being easy to use and secure</p>
+            </div>
+        </div>
+        <div class="row pt-1" id="start">
+            <div class="col-lg-12 text-left">
+                <h2>routes</h2>
+            </div>
+        </div>
+
+        <div class="row pt-3" id="remind">
+            <div class="col-lg-12 text-left">
+                <h3><samp>/api/login</samp></h3>
+                <h5><kbd>POST</kbd></h5>
+                <p>returns token if login credentials are correct</p>
+                <h6>JSON body</h6>
+                <ul class="no-points">
+                    <li><samp>username:</samp><span class="badge badge-secondary">username</span></li>
+                    <li><samp>password:</samp><span class="badge badge-secondary">plaintext password</span></li>
+                </ul>
+                <h6>response</h6>
+                <span class="badge badge-secondary">HTTP/1.1 200</span>
+                <ul class="no-points">
+                    <li><samp>token:</samp> user token</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="row pt-3" id="remind">
+            <div class="col-lg-12 text-left">
+                <h3><samp>/api/events</samp></h3>
+
+                <p>all requests must have the user's token as a header</p>
+                <h6>request header</h6>
+                <ul>
+                    <li><p><samp>token:</samp><span class="badge badge-secondary">user_token</span></p></li>
+                </ul>
+                <h5><kbd>GET</kbd></h5>
+                <h6>query params</h6>
+                <ul class="no-points">
+                    <li><samp>?eventhex=:</samp><span class="badge badge-secondary">eventhex</span></li>
+                    <li><samp>?start=:</samp><span class="badge badge-secondary">UNIX Timestamp</span></li>
+                    <li><samp>?start=:</samp><span class="badge badge-secondary">UNIX Timestamp</span><samp>&end=:</samp><span class="badge badge-secondary">UNIX Timestamp</span></li>
+                </ul>
+                <h6>response</h6>
+                <span class="badge badge-secondary">HTTP/1.1 200</span>
+                <ul class="no-points">
+                    <li><samp>eventid</samp> unused</li>
+                    <li><samp>userid</samp> event owner's user ID</li>
+                    <li><samp>eventhex</samp> @-prefixed and upper-case user-unique event ID</li>
+                    <li><samp>type</samp> "E" or "R" (allows more for future-compatability</li>
+                    <li><samp>name</samp> string</li>
+                    <li><samp>start</samp> UNIX Timestamp</li>
+                    <li><samp>end</samp> UNIX Timestamp</li>
+                    <li><samp>info</samp> string</li>
+                </ul>
+
+                <h5><kbd>POST</kbd></h5>
+                <h6>JSON body</h6>
+                <ul class="no-points">
+                    <li><samp>name: </samp><span class="badge badge-secondary">string</span></li>
+                    <li><samp>start: </samp><span class="badge badge-secondary">UNIX Timesamp</span></li>
+                    <li><samp>end: </samp><span class="badge badge-secondary">UNIX Timestamp</span></li>
+                    <li><samp>type: </samp><span class="badge badge-secondary">"E" or "R"</span></li>
+                    <li><samp>info: </samp><span class="badge badge-secondary">string</span></li>
+                </ul>
+                <h6>response</h6>
+                <span class="badge badge-secondary">HTTP/1.1 200</span>
+                <ul class="no-points">
+                    <li><samp>eventhex</samp> @-prefixed and upper-case user-unique event ID (generated)</li>
+                </ul>
+
+                <h5><kbd>PATCH</kbd></h5>
+                <h6>query params</h6>
+                <p>all of the JSON keys are <b>required</b>, even if their value isn't being changed</p>
+                <ul class="no-points">
+                    <li><samp>?eventhex=:</samp><span class="badge badge-secondary">eventhex</span></li>
+                </ul>
+                <h6>JSON body</h6>
+                <ul class="no-points">
+                    <li><samp>start: </samp><span class="badge badge-secondary">UNIX Timesamp</span></li>
+                    <li><samp>end: </samp><span class="badge badge-secondary">UNIX Timestamp</span></li>
+                    <li><samp>type: </samp><span class="badge badge-secondary">"E" or "R"</span></li>
+                    <li><samp>info: </samp><span class="badge badge-secondary">string</span></li>
+                </ul>
+                <h6>response</h6>
+                <span class="badge badge-secondary">HTTP/1.1 204</span>
+                <ul class="no-points">
+                    <li><samp>success</samp></li>
+                </ul>
+
+                <h5><kbd>DELETE</kbd></h5>
+                <h6>JSON body</h6>
+                <ul class="no-points">
+                    <li><samp>hex: </samp>[<span class="badge badge-secondary">eventhex</span>, <span class="badge badge-secondary">eventhex</span>, ...]</li>
+                </ul>
+                <h6>response</h6>
+                <span class="badge badge-secondary">HTTP/1.1 200</span>
+                <ul class="no-points">
+                    <li><samp>eventhex:</samp> [deleted event, deleted event...]</li>
+                </ul>
+            
+            </div>
+        </div>
+        
+        
+
+                
+       
+{% endblock %}

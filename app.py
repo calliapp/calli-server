@@ -67,6 +67,10 @@ def docs_api():
 def docs_server():
     return render_template("docs_server.html")
 
+@app.route("/docs/install-cli")
+def docs_install():
+    return render_template("docs_install.html")
+
 ## WEBAPP ##
 
 ## TODO accept redirects from /register
@@ -172,8 +176,6 @@ def dash_create():
             event['type'] = "R"
         else:
             event['type'] = "?"
-
-        url = baseurl + "/events"
         
         r = lambda: random.randint(0,255)
         existing = db.execute("SELECT eventhex FROM calendar WHERE userid=(:userid)", userid=session['user_id'])
@@ -427,7 +429,7 @@ def new_event():
             ## If all the events got deleted ##
             if deleted == len(content['hex']):
                 ## Return the successfully deleted events ##
-                return json.dumps({'eventhex':eventhex}), 204, {'ContentType':'application/json'}
+                return json.dumps({'eventhex':eventhex}), 200, {'ContentType':'application/json'}
             else:
                 ## Else you fucked up ##
                 return jsonify("failed"), 401, {'ContentType':'application/json'}
